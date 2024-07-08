@@ -1,0 +1,88 @@
+[gd_scene load_steps=12 format=3 uid="uid://d3r7vovrcnb5n"]
+
+[ext_resource type="TileSet" uid="uid://bjqdv1xmbnwcv" path="res://tile_sets/basic_tile_set.tres" id="1_p6x3d"]
+[ext_resource type="PhysicsMaterial" uid="uid://c7lh5saouqxng" path="res://physics/tile_physics_material.tres" id="2_ai85m"]
+[ext_resource type="Texture2D" uid="uid://dh3y43310kmgi" path="res://sprites/basic_spritesheet.png" id="2_dur37"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="3_mqhx2"]
+[ext_resource type="Script" path="res://scripts/cursor.gd" id="4_7yq4d"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vimpx"]
+radius = 50.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_i2pvg"]
+radius = 10.0
+height = 20.0
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_84px6"]
+normal = Vector2(0, 1)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yfvrg"]
+normal = Vector2(-1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_vs64w"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_s1ate"]
+
+[node name="Main" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+show_behind_parent = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1100.0
+offset_bottom = 1100.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.603922, 0.819608, 1, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/modulate = Color(0.956863, 0.909804, 0.913725, 1)
+layer_0/tile_data = PackedInt32Array(589824, 21, 4, 589825, 21, 4, 589826, 21, 4, 589827, 21, 4, 589828, 21, 4, 589829, 21, 4, 589830, 21, 4, 589831, 21, 4, 589832, 21, 4, 589833, 21, 4, 524297, 21, 4, 524296, 21, 4, 524294, 21, 4, 524293, 21, 4, 524292, 21, 4, 524291, 21, 4, 524290, 21, 4, 524289, 21, 4, 524288, 21, 4, 458752, 21, 4, 458753, 21, 4, 458754, 21, 4, 458755, 21, 4, 458756, 21, 4, 458757, 21, 4, 458758, 21, 4, 458759, 21, 4, 458760, 21, 4, 458761, 21, 4, 393219, 21, 1, 393218, 21, 1, 327682, 65557, 1, 327683, 65557, 1, 262147, 21, 1, 196611, 65557, 1, 196612, 65557, 1, 131075, 21, 1, 65539, 21, 1, 65538, 21, 1, 327687, 21, 1, 262151, 21, 1, 327688, 21, 1, 393224, 21, 1, 196615, 21, 3, 65542, 262165, 0, 524295, 21, 4, 262148, 21, 2, 131074, 21, 2)
+
+[node name="Player" type="RigidBody2D" parent="."]
+position = Vector2(178, 426)
+physics_material_override = ExtResource("2_ai85m")
+gravity_scale = 0.0
+script = ExtResource("3_mqhx2")
+
+[node name="Sprite" type="Sprite2D" parent="Player"]
+texture = ExtResource("2_dur37")
+region_enabled = true
+region_rect = Rect2(221.821, 621.52, 160, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CircleShape2D_vimpx")
+
+[node name="Cursor" type="MeshInstance2D" parent="."]
+mesh = SubResource("SphereMesh_i2pvg")
+script = ExtResource("4_7yq4d")
+
+[node name="Walls" type="RigidBody2D" parent="."]
+physics_material_override = ExtResource("2_ai85m")
+gravity_scale = 0.0
+freeze = true
+
+[node name="TopWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(573, 0)
+shape = SubResource("WorldBoundaryShape2D_84px6")
+
+[node name="RightWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(1100, 561)
+shape = SubResource("WorldBoundaryShape2D_yfvrg")
+
+[node name="LeftWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(0, 561)
+shape = SubResource("WorldBoundaryShape2D_vs64w")
+
+[node name="BottomWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(573, 1100)
+shape = SubResource("WorldBoundaryShape2D_s1ate")
