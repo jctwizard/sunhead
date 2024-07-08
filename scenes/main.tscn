@@ -1,17 +1,30 @@
-[gd_scene load_steps=12 format=3 uid="uid://d3r7vovrcnb5n"]
+[gd_scene load_steps=17 format=3 uid="uid://d3r7vovrcnb5n"]
 
+[ext_resource type="Script" path="res://scripts/level_manager.gd" id="1_gqlnw"]
 [ext_resource type="TileSet" uid="uid://bjqdv1xmbnwcv" path="res://tile_sets/basic_tile_set.tres" id="1_p6x3d"]
 [ext_resource type="PhysicsMaterial" uid="uid://c7lh5saouqxng" path="res://physics/tile_physics_material.tres" id="2_ai85m"]
-[ext_resource type="Texture2D" uid="uid://dh3y43310kmgi" path="res://sprites/basic_spritesheet.png" id="2_dur37"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="3_mqhx2"]
+[ext_resource type="PackedScene" uid="uid://c314281f0wowu" path="res://prefabs/player.tscn" id="3_4v2q5"]
+[ext_resource type="FontFile" uid="uid://dhwcw70aob8o5" path="res://fonts/Sono-Regular.ttf" id="3_so2re"]
 [ext_resource type="Script" path="res://scripts/cursor.gd" id="4_7yq4d"]
+[ext_resource type="Texture2D" uid="uid://cqrpj57oxyhfp" path="res://sprites/cursor.png" id="5_p2tse"]
+[ext_resource type="Texture2D" uid="uid://cxtm5nqci11n8" path="res://sprites/sling.png" id="7_wpk6l"]
+[ext_resource type="PackedScene" uid="uid://68ha7v5q7u3" path="res://prefabs/goal.tscn" id="9_44t1a"]
+[ext_resource type="PackedScene" uid="uid://bu82cqbx4g7ix" path="res://prefabs/speech_bubble.tscn" id="10_qi52b"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_vimpx"]
-radius = 50.0
+[sub_resource type="LabelSettings" id="LabelSettings_w40pf"]
+font = ExtResource("3_so2re")
+font_size = 40
+font_color = Color(0, 0, 0, 1)
 
-[sub_resource type="SphereMesh" id="SphereMesh_i2pvg"]
-radius = 10.0
-height = 20.0
+[sub_resource type="GDScript" id="GDScript_10ftn"]
+script/source = "extends Label
+
+var current_timer = 0.0
+
+func _process(delta):
+	current_timer += delta
+	
+"
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_84px6"]
 normal = Vector2(0, 1)
@@ -26,8 +39,17 @@ normal = Vector2(1, 0)
 
 [node name="Main" type="Node2D"]
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Game" type="Node2D" parent="." node_paths=PackedStringArray("timer", "level_number", "start_text")]
+script = ExtResource("1_gqlnw")
+timer = NodePath("ColorRect/Timer")
+level_number = NodePath("ColorRect/Level")
+start_text = NodePath("ColorRect/StartText")
+player_prefab = ExtResource("3_4v2q5")
+metadata/_edit_lock_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Game"]
 show_behind_parent = true
+z_index = -100
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -37,52 +59,258 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-color = Color(0.603922, 0.819608, 1, 1)
+metadata/_edit_lock_ = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Timer" type="Label" parent="Game/ColorRect"]
+modulate = Color(1, 1, 1, 0.270588)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_left = 100.0
+offset_top = 14.0
+offset_right = -25.0
+offset_bottom = 63.0
+grow_horizontal = 2
+text = "0.00"
+label_settings = SubResource("LabelSettings_w40pf")
+horizontal_alignment = 2
+script = SubResource("GDScript_10ftn")
+
+[node name="StartText" type="Label" parent="Game/ColorRect"]
+visible = false
+modulate = Color(1, 1, 1, 0.270588)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_left = 25.0
+offset_right = -25.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "
+Click to Begin
+(mouse to move)
+(R to reset)
+"
+label_settings = SubResource("LabelSettings_w40pf")
+horizontal_alignment = 1
+script = SubResource("GDScript_10ftn")
+
+[node name="Level" type="Label" parent="Game/ColorRect"]
+modulate = Color(1, 1, 1, 0.270588)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_left = 25.0
+offset_top = 14.0
+offset_right = 62.0
+offset_bottom = 102.0
+grow_horizontal = 2
+text = "0
+"
+label_settings = SubResource("LabelSettings_w40pf")
+script = SubResource("GDScript_10ftn")
+
+[node name="Camera2D" type="Camera2D" parent="Game"]
 anchor_mode = 0
+metadata/_edit_lock_ = true
 
-[node name="TileMap" type="TileMap" parent="."]
-tile_set = ExtResource("1_p6x3d")
-format = 2
-layer_0/modulate = Color(0.956863, 0.909804, 0.913725, 1)
-layer_0/tile_data = PackedInt32Array(589824, 21, 4, 589825, 21, 4, 589826, 21, 4, 589827, 21, 4, 589828, 21, 4, 589829, 21, 4, 589830, 21, 4, 589831, 21, 4, 589832, 21, 4, 589833, 21, 4, 524297, 21, 4, 524296, 21, 4, 524294, 21, 4, 524293, 21, 4, 524292, 21, 4, 524291, 21, 4, 524290, 21, 4, 524289, 21, 4, 524288, 21, 4, 458752, 21, 4, 458753, 21, 4, 458754, 21, 4, 458755, 21, 4, 458756, 21, 4, 458757, 21, 4, 458758, 21, 4, 458759, 21, 4, 458760, 21, 4, 458761, 21, 4, 393219, 21, 1, 393218, 21, 1, 327682, 65557, 1, 327683, 65557, 1, 262147, 21, 1, 196611, 65557, 1, 196612, 65557, 1, 131075, 21, 1, 65539, 21, 1, 65538, 21, 1, 327687, 21, 1, 262151, 21, 1, 327688, 21, 1, 393224, 21, 1, 196615, 21, 3, 65542, 262165, 0, 524295, 21, 4, 262148, 21, 2, 131074, 21, 2)
+[node name="Sling" type="Sprite2D" parent="Game"]
+z_index = -1
+texture = ExtResource("7_wpk6l")
+metadata/_edit_lock_ = true
 
-[node name="Player" type="RigidBody2D" parent="."]
-position = Vector2(178, 426)
-physics_material_override = ExtResource("2_ai85m")
-gravity_scale = 0.0
-script = ExtResource("3_mqhx2")
-
-[node name="Sprite" type="Sprite2D" parent="Player"]
-texture = ExtResource("2_dur37")
-region_enabled = true
-region_rect = Rect2(221.821, 621.52, 160, 160)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-shape = SubResource("CircleShape2D_vimpx")
-
-[node name="Cursor" type="MeshInstance2D" parent="."]
-mesh = SubResource("SphereMesh_i2pvg")
+[node name="Cursor" type="Sprite2D" parent="Game" node_paths=PackedStringArray("sling")]
+z_index = 1
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("5_p2tse")
 script = ExtResource("4_7yq4d")
+sling = NodePath("../Sling")
+metadata/_edit_lock_ = true
 
-[node name="Walls" type="RigidBody2D" parent="."]
+[node name="Walls" type="RigidBody2D" parent="Game"]
 physics_material_override = ExtResource("2_ai85m")
 gravity_scale = 0.0
 freeze = true
+metadata/_edit_lock_ = true
 
-[node name="TopWall" type="CollisionShape2D" parent="Walls"]
+[node name="TopWall" type="CollisionShape2D" parent="Game/Walls"]
 position = Vector2(573, 0)
 shape = SubResource("WorldBoundaryShape2D_84px6")
 
-[node name="RightWall" type="CollisionShape2D" parent="Walls"]
+[node name="RightWall" type="CollisionShape2D" parent="Game/Walls"]
 position = Vector2(1100, 561)
 shape = SubResource("WorldBoundaryShape2D_yfvrg")
 
-[node name="LeftWall" type="CollisionShape2D" parent="Walls"]
+[node name="LeftWall" type="CollisionShape2D" parent="Game/Walls"]
 position = Vector2(0, 561)
 shape = SubResource("WorldBoundaryShape2D_vs64w")
 
-[node name="BottomWall" type="CollisionShape2D" parent="Walls"]
+[node name="BottomWall" type="CollisionShape2D" parent="Game/Walls"]
 position = Vector2(573, 1100)
 shape = SubResource("WorldBoundaryShape2D_s1ate")
+
+[node name="Level0" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level0"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(589824, 21, 4, 589825, 21, 4, 589826, 21, 4, 589827, 21, 4, 589828, 21, 4, 589829, 21, 4, 589830, 21, 4, 589831, 21, 4, 589832, 21, 4, 589833, 21, 4, 524297, 21, 4, 524296, 21, 4, 524294, 21, 4, 524293, 21, 4, 524292, 21, 4, 524291, 21, 4, 524290, 21, 4, 524289, 21, 4, 524288, 21, 4, 458752, 21, 4, 458753, 21, 4, 458754, 21, 4, 458755, 21, 4, 458756, 21, 4, 458757, 21, 4, 458758, 21, 4, 458759, 21, 4, 458760, 21, 4, 458761, 21, 4, 524295, 21, 4, 393216, 21, 4, 393217, 21, 4, 393218, 21, 4, 393219, 21, 4, 393220, 21, 4, 393221, 21, 4, 393222, 21, 4, 393223, 21, 4, 393224, 21, 4, 393225, 21, 4, 327685, 21, 1, 327684, 65557, 1, 262148, 21, 1, 262149, 21, 1, 65544, 262165, 0, 327689, 65557, 1, 65537, 262165, 0, 196610, 262165, 0)
+
+[node name="Goal" parent="Level0" instance=ExtResource("9_44t1a")]
+position = Vector2(983, 477)
+rotation = -0.241244
+
+[node name="Spawn" type="Node2D" parent="Level0"]
+position = Vector2(180, 525)
+
+[node name="SpeechBubble" parent="Level0" instance=ExtResource("10_qi52b")]
+position = Vector2(170, 168)
+speech = Array[String](["click.", "click..", "click...", "z z z"])
+
+[node name="Level1" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level1"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(589824, 21, 4, 589825, 21, 4, 589826, 21, 4, 589827, 21, 4, 589828, 21, 4, 589829, 21, 4, 589830, 21, 4, 589831, 21, 4, 589832, 21, 4, 589833, 21, 4, 524297, 21, 4, 524296, 21, 4, 524294, 21, 4, 524293, 21, 4, 524292, 21, 4, 524291, 21, 4, 524290, 21, 4, 524289, 21, 4, 524288, 21, 4, 458752, 21, 4, 458753, 21, 4, 458754, 21, 4, 458755, 21, 4, 458756, 21, 4, 458757, 21, 4, 458758, 21, 4, 458759, 21, 4, 458760, 21, 4, 458761, 21, 4, 327682, 65557, 1, 327683, 65557, 1, 262147, 21, 1, 196611, 65557, 1, 196612, 65557, 1, 131075, 21, 1, 65539, 21, 1, 65538, 21, 1, 327687, 21, 1, 262151, 21, 1, 327688, 21, 1, 393224, 21, 1, 65542, 262165, 0, 524295, 21, 4, 262148, 21, 2, 131074, 21, 2, 393219, 65557, 1, 393221, 131093, 2, 196615, 131093, 0)
+
+[node name="Goal" parent="Level1" instance=ExtResource("9_44t1a")]
+position = Vector2(245, 434)
+rotation = -1.55919
+
+[node name="Spawn" type="Node2D" parent="Level1"]
+position = Vector2(974, 444)
+
+[node name="SpeechBubble2" parent="Level1" instance=ExtResource("10_qi52b")]
+position = Vector2(612, 706)
+speech = Array[String](["moon", "soon", "rises", "spoon", "flies", "high", "yum", "..."])
+
+[node name="Level2" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level2"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(589824, 21, 4, 589825, 21, 4, 589826, 21, 4, 589827, 21, 4, 589828, 21, 4, 589829, 21, 4, 589830, 21, 4, 589831, 21, 4, 589832, 21, 4, 589833, 21, 4, 524297, 21, 4, 524296, 21, 4, 524294, 21, 4, 524293, 21, 4, 524292, 21, 4, 524291, 21, 4, 524290, 21, 4, 524289, 21, 4, 524288, 21, 4, 524295, 21, 4, 131074, 21, 2, 131075, 21, 2, 196611, 21, 2, 262147, 21, 2, 327682, 21, 2, 327683, 21, 2, 327684, 21, 2, 131077, 21, 2, 393220, 21, 2, 1, 65557, 2, 65536, 65557, 2, 458756, 21, 2, 393222, 65557, 2, 393224, 65557, 2, 131079, 65557, 2, 196614, 65557, 2, 196616, 65557, 2, 131076, 131093, 131072, 458755, 21, 2, 458754, 21, 2, 65539, 131093, 3, 393219, 131093, 0, 393218, 131093, 0)
+
+[node name="Spawn" type="Node2D" parent="Level2"]
+position = Vector2(210, 431)
+
+[node name="Goal" parent="Level2" instance=ExtResource("9_44t1a")]
+position = Vector2(545, 400)
+rotation = -3.14508
+
+[node name="SpeechBubble3" parent="Level2" instance=ExtResource("10_qi52b")]
+position = Vector2(720, 734)
+speech = Array[String](["bzzt", "bzzzzzzt", "bzt", "", "do i sound", "like a bee?", "these leaves", "are nice", "bzzt bzzt"])
+
+[node name="Level3" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level3"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(589824, 21, 4, 589825, 21, 4, 589826, 21, 4, 589827, 21, 4, 589828, 21, 4, 589829, 21, 4, 589830, 21, 4, 589831, 21, 4, 589832, 21, 4, 589833, 21, 4, 458755, 65557, 1, 458759, 65557, 1, 393219, 196629, 2, 327683, 196629, 2, 262147, 196629, 2, 393223, 196629, 2, 327687, 196629, 2, 262151, 196629, 0, 196611, 196629, 1, 65541, 131093, 0, 65538, 65557, 2, 196609, 65557, 2, 327680, 65557, 2, 65542, 131093, 0, 458756, 65557, 1, 458757, 21, 1, 458758, 65557, 1, 262153, 131093, 0, 262152, 131093, 131072, 196617, 131093, 0, 131081, 131093, 0)
+
+[node name="Spawn" type="Node2D" parent="Level3"]
+position = Vector2(544, 436)
+
+[node name="Goal" parent="Level3" instance=ExtResource("9_44t1a")]
+position = Vector2(1011, 931)
+rotation = -0.0539648
+
+[node name="SpeechBubble" parent="Level3" instance=ExtResource("10_qi52b")]
+position = Vector2(838, 493)
+speech = Array[String](["hello :-)", "thanks for", "stopping by!"])
+
+[node name="SpeechBubble3" parent="Level3" instance=ExtResource("10_qi52b")]
+position = Vector2(396, 381)
+speech = Array[String]([".", "..", "...", "shhh", "i'm hiding", "...", "..", "."])
+
+[node name="SpeechBubble2" parent="Level3" instance=ExtResource("10_qi52b")]
+position = Vector2(1045, 265)
+speech = Array[String](["these blocks", "...", "never chat", "some don't", "even block!"])
+
+[node name="Level4" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level4"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(589825, 65557, 1, 458753, 21, 1, 65538, 262165, 3, 524289, 65557, 1, 65543, 262165, 3, 65544, 262165, 3, 196612, 262165, 3, 196613, 262165, 3, 196614, 262165, 3, 196615, 262165, 3, 196616, 262165, 3, 327683, 262165, 3, 393219, 262165, 3, 393221, 262165, 3, 327685, 262165, 3, 393217, 262165, 3, 393218, 262165, 3, 393222, 262165, 3, 393223, 262165, 3, 589826, 21, 1, 393224, 262165, 3, 393225, 262165, 3, 196611, 262165, 3, 196610, 262165, 3, 196609, 262165, 3, 196608, 262165, 3, 262144, 262165, 3, 131073, 131093, 1, 65537, 65557, 0, 327681, 262165, 1, 589832, 65557, 1, 589830, 65557, 1, 589829, 65557, 1, 524293, 21, 1, 327686, 21, 4, 327687, 21, 4, 327688, 21, 4, 327689, 21, 4, 131079, 131093, 131072, 4, 262165, 0)
+
+[node name="Spawn" type="Node2D" parent="Level4"]
+position = Vector2(1008, 888)
+
+[node name="Goal" parent="Level4" instance=ExtResource("9_44t1a")]
+position = Vector2(564, 285)
+rotation = -0.0539648
+
+[node name="SpeechBubble" parent="Level4" instance=ExtResource("10_qi52b")]
+speech = Array[String](["hey there", "i'm chilling", "go slow!", "see who's around!"])
+
+[node name="SpeechBubble2" parent="Level4" instance=ExtResource("10_qi52b")]
+position = Vector2(164, 248)
+speech = Array[String](["that cuber", "don't listen...", "go fast"])
+
+[node name="Level5" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level5"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(458757, 196629, 3, 458758, 196629, 3, 589825, 262165, 0, 524291, 262165, 0, 589831, 262165, 0, 524296, 262165, 0, 327683, 196629, 3, 327682, 196629, 3, 196614, 196629, 3, 196615, 196629, 3, 262146, 21, 0, 131079, 262165, 2, 393221, 196629, 2, 327685, 196629, 2, 131078, 196629, 2, 65542, 196629, 2, 262147, 196629, 2, 196611, 196629, 2, 393222, 196629, 2, 131073, 262165, 0, 65540, 262165, 0)
+
+[node name="Spawn" type="Node2D" parent="Level5"]
+position = Vector2(562, 245)
+
+[node name="Goal" parent="Level5" instance=ExtResource("9_44t1a")]
+position = Vector2(172, 931)
+rotation = -0.0539648
+
+[node name="SpeechBubble" parent="Level5" instance=ExtResource("10_qi52b")]
+position = Vector2(289, 503)
+speech = Array[String](["oh!", "so high", "i like it here", "although", "i miss the sound", "of the waves", "and the colour", "of my beak", ""])
+
+[node name="SpeechBubble2" parent="Level5" instance=ExtResource("10_qi52b")]
+position = Vector2(831, 280)
+speech = Array[String](["nearly finished", "do you like origami?", "it relaxes me", "*fold*", "*crease*", "*fold*", "take this one", "enjoy", "-u-"])
+
+[node name="Level6" type="Node2D" parent="."]
+visible = false
+
+[node name="TileMap" type="TileMap" parent="Level6"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(524291, 21, 2, 524292, 21, 2, 524293, 21, 2, 524294, 21, 2, 524295, 21, 2, 524296, 21, 2, 524297, 21, 2, 131075, 21, 2, 131076, 21, 2, 196612, 21, 2, 65545, 21, 2, 65544, 21, 2, 131080, 21, 2, 131079, 21, 2, 196616, 21, 2, 196617, 21, 2, 262153, 21, 2, 131081, 21, 2, 589833, 21, 2, 589832, 21, 2, 589831, 21, 2, 589830, 21, 2, 589829, 21, 2, 589828, 21, 2, 393221, 196629, 2, 393222, 196629, 2, 393223, 196629, 2, 393224, 131093, 0, 458757, 131093, 1, 458759, 131093, 1, 327681, 21, 2, 327680, 21, 2, 393216, 21, 2, 327682, 21, 2, 393217, 21, 2, 196611, 262165, 3, 327683, 262165, 3, 262147, 131093, 131072, 65536, 21, 2, 262152, 21, 2, 262151, 21, 2, 131072, 21, 2, 65537, 21, 2)
+
+[node name="Spawn" type="Node2D" parent="Level6"]
+position = Vector2(172, 888)
+
+[node name="Goal" parent="Level6" instance=ExtResource("9_44t1a")]
+position = Vector2(169, 482)
+rotation = -0.0539648
+
+[node name="SpeechBubble" parent="Level6" instance=ExtResource("10_qi52b")]
+position = Vector2(940, 711)
+speech = Array[String](["you are", "near the top", "of the world", "have you", "seen my friend?", "I'll find them", "soon enough!", ""])
+
+[node name="Level7" type="Node2D" parent="."]
+
+[node name="TileMap" type="TileMap" parent="Level7"]
+tile_set = ExtResource("1_p6x3d")
+format = 2
+layer_0/tile_data = PackedInt32Array(65536, 21, 4, 65537, 21, 4, 65538, 21, 4, 65539, 21, 4, 65540, 21, 4, 65541, 21, 4, 65542, 21, 4, 65543, 21, 4, 65544, 21, 4, 65545, 21, 4, 196608, 65557, 1, 131072, 21, 1, 131073, 65557, 1, 131074, 65557, 1, 262147, 21, 1, 262148, 21, 1, 327684, 65557, 1, 524297, 21, 2, 524296, 21, 2, 524295, 21, 2, 589831, 21, 2, 589830, 21, 2, 589832, 21, 2, 589833, 21, 2, 589825, 21, 2, 589824, 21, 2, 524288, 21, 2, 131079, 65557, 1, 196615, 21, 1, 262151, 65557, 1, 262150, 21, 1, 196612, 262165, 1, 524291, 21, 2, 524292, 21, 2)
+
+[node name="Spawn" type="Node2D" parent="Level7"]
+position = Vector2(220, 456)
+
+[node name="Goal" parent="Level7" instance=ExtResource("9_44t1a")]
+position = Vector2(1034, 304)
+rotation = -3.15113
+
+[node name="SpeechBubble2" parent="Level7" instance=ExtResource("10_qi52b")]
+position = Vector2(505, 388)
+speech = Array[String](["take a dip", "if you like", "swimming", "I prefer", "sitting here"])
