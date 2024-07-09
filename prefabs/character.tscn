@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=3 uid="uid://qv5r25xyy3uo"]
+
+[ext_resource type="PhysicsMaterial" uid="uid://c7lh5saouqxng" path="res://physics/tile_physics_material.tres" id="1_amcxt"]
+[ext_resource type="Script" path="res://scripts/character.gd" id="2_bogs6"]
+[ext_resource type="Texture2D" uid="uid://cyv0ql1fc8tbn" path="res://sprites/sun-head.png" id="3_6fmgs"]
+[ext_resource type="Script" path="res://scripts/animate.gd" id="4_nqt6i"]
+[ext_resource type="FontFile" uid="uid://dp45wfma7rscj" path="res://fonts/Sniglet-Regular.otf" id="5_e3qhc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nbq4h"]
+radius = 35.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_luef5"]
+font = ExtResource("5_e3qhc")
+font_size = 30
+font_color = Color(0.00392157, 0.00392157, 0.00392157, 1)
+
+[node name="Character" type="RigidBody2D"]
+position = Vector2(803, 494)
+physics_material_override = ExtResource("1_amcxt")
+gravity_scale = 0.0
+freeze = true
+freeze_mode = 1
+max_contacts_reported = 10
+contact_monitor = true
+script = ExtResource("2_bogs6")
+
+[node name="CharacterSprite" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_6fmgs")
+script = ExtResource("4_nqt6i")
+
+[node name="CharacterCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_nbq4h")
+
+[node name="Label" type="Label" parent="."]
+z_index = 10
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -76.0
+offset_right = 100.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "hello there"
+label_settings = SubResource("LabelSettings_luef5")
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="Label"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.658824)

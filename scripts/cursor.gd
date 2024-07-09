@@ -1,6 +1,7 @@
 extends Node2D
 
 @export var player : Node2D
+@export var camera : Camera2D
 @export var sling : Node2D
 @export var sling_height : float = 200
 
@@ -17,9 +18,12 @@ func update_sprites():
 		player = get_node_or_null("../Player")
 		
 		if player == null:
+			sling.visible = false
 			return
+	elif sling.visible == false:
+		sling.visible = true
 	
-	global_position = get_viewport().get_mouse_position()
+	global_position = camera.global_position + get_viewport().get_mouse_position()
 	
 	global_rotation = player.global_position.angle_to_point(global_position) + deg_to_rad(90)
 	

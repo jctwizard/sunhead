@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="sunhead"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/world.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 
 [display]
 
-window/size/viewport_width=1100
-window/size/viewport_height=1100
+window/size/viewport_width=800
+window/size/viewport_height=800
 
 [dotnet]
 

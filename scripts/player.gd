@@ -7,6 +7,9 @@ extends RigidBody2D
 
 var bumps : int = 0
 var bump_show_time : float = 0.0
+var stop_linear_velocity : Vector2 = Vector2.ZERO
+var stop_angular_velocity : float = 0.0
+var camera : Camera2D
 
 func _ready():
 	name = "Player"
@@ -24,13 +27,22 @@ func _process(delta):
 
 func _physics_process(delta):
 	if freeze == false:
-		var movement = speed * (get_viewport().get_mouse_position() - global_position)
+		var movement = speed * ((camera.global_position + get_viewport().get_mouse_position()) - global_position)
 		apply_force(movement * delta)
 	
 func reset():
 	set_deferred("linear_velocity", Vector2.ZERO)
 	set_deferred("angular_velocity" , 0)
-	bumps = 0
+	
+func stop():
+	set_deferred("freeze", true)
+	stop_linear_velocity = linear_velocity
+	stop_angular_velocity = angular_velocity
+	
+func go():
+	#set_deferred("linear_velocity", stop_linear_velocity)
+	#set_deferred("angular_velocity", stop_angular_velocity)
+	set_deferred("freeze", false)
 	
 func _on_body_entered(_body : Node):
 	bumps += 1
