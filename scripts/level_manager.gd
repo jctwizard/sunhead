@@ -132,7 +132,7 @@ func load_level():
 		transitioning = true
 	
 		var level_original_y = level_node.global_position.y
-		level_node.global_position.y += get_viewport_rect().size.y
+		level_node.global_position.y -= get_viewport_rect().size.y
 		
 		var previous_level_original_y = previous_level.global_position.y
 	
@@ -140,8 +140,8 @@ func load_level():
 		
 		while transition_time < transition_duration:
 			transition_time += get_process_delta_time()
-			previous_level.global_position.y = previous_level_original_y - get_viewport_rect().size.y * ease(transition_time / transition_duration, -2.0)
-			level_node.global_position.y = level_original_y + get_viewport_rect().size.y * (1.0 - ease(transition_time / transition_duration, -2.0))
+			previous_level.global_position.y = previous_level_original_y + get_viewport_rect().size.y * ease(transition_time / transition_duration, -2.0)
+			level_node.global_position.y = level_original_y - get_viewport_rect().size.y * (1.0 - ease(transition_time / transition_duration, -2.0))
 		
 			await get_tree().process_frame
 		
