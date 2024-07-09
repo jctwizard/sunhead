@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bu82cqbx4g7ix"]
 
 [ext_resource type="Script" path="res://scripts/speech_bubble.gd" id="1_blf2j"]
-[ext_resource type="FontFile" path="res://fonts/Sniglet-Regular.otf" id="2_dfrpa"]
+[ext_resource type="FontFile" uid="uid://dp45wfma7rscj" path="res://fonts/Sniglet-Regular.otf" id="2_dfrpa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vyiwd"]
 size = Vector2(150, 150)

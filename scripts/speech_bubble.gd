@@ -10,7 +10,7 @@ func _ready():
 	bubble.visible = false
 	bubble.text = speech[current_speech]
 	
-func _process(delta):
+func _process(_delta):
 	if bubble.visible and Input.is_action_just_pressed("speak"):
 		current_speech += 1
 		 
