@@ -9,6 +9,7 @@
 radius = 20.0
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("default_sprite", "bump_sprite")]
+z_index = 1
 physics_material_override = ExtResource("1_o1ixi")
 gravity_scale = 0.0
 max_contacts_reported = 1

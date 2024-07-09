@@ -65,8 +65,12 @@ func _process(delta):
 		reset()
 		
 	if Input.is_key_pressed(KEY_R):
-		reset_game()
-		load_level()
+		if current_level != 0:
+			if player != null:
+				player.free()
+				
+			reset_game()
+			load_level()
 
 func update_timer():
 	score_text.visible = false
