@@ -1,8 +1,8 @@
 extends Node2D
 class_name world_manager
 
+@export var room_size : Vector2 = Vector2(600, 600) 
 @export var timer_label : Label
-@export var level_label : Label
 @export var score_label : Label
 @export var bumps_label : Label
 @export var spawn : Node2D
@@ -10,6 +10,8 @@ class_name world_manager
 @export var player_prefab : PackedScene
 @export var transition_duration : float = 1.5
 @export var camera : Camera2D
+@export var overlay : Control
+@export var time_decimals : int = 1
 
 var current_timer = 0.0
 
@@ -23,15 +25,21 @@ var transitioning = false
 
 var level_coordinates = Vector2.ZERO
 
+var margin_size : Vector2
+
 func _ready():
-	timer_label.text = ""
-	level_label.text = ""
-	bumps_label.text = ""
+	timer_label.text = "0.0"
+	bumps_label.text = "0"
+	
+	margin_size = (get_viewport_rect().size - room_size) / 2
 	
 	for goal in goals:
 		goal.connect("body_entered", triggered_goal)
 	
 	spawn_player()
+	
+	overlay.visible = true
+	overlay.global_position = Vector2.ZERO
 	
 func spawn_player():
 	if spawn != null:
@@ -55,7 +63,7 @@ func _process(delta):
 		
 		update_timer()
 		
-		bumps_label.text = "bumps: " + str(player.bumps)
+		bumps_label.text = str(player.bumps)
 		
 		if best_bumps != 0:
 			bumps_label.text += "/" + str(best_bumps)
@@ -68,13 +76,13 @@ func _process(delta):
 
 func update_camera():
 	if player != null and camera != null and transitioning == false:
-		if player.global_position.x < camera.global_position.x:
+		if player.global_position.x < camera.global_position.x + margin_size.x:
 			await transition(-1, 0)
-		elif player.global_position.x > camera.global_position.x + get_viewport_rect().size.x:
+		elif player.global_position.x > camera.global_position.x + get_viewport_rect().size.x - margin_size.x:
 			await transition(1, 0)
-		elif player.global_position.y < camera.global_position.y:
+		elif player.global_position.y < camera.global_position.y + margin_size.y:
 			await transition(0, -1)
-		elif player.global_position.y > camera.global_position.y + get_viewport_rect().size.y:
+		elif player.global_position.y > camera.global_position.y + get_viewport_rect().size.y - margin_size.y:
 			await transition(0, 1)
 
 func transition(x, y):
@@ -85,25 +93,21 @@ func transition(x, y):
 			player.bumps = 0
 			current_timer = 0
 			score_label.visible = false
-			level_label.visible = true
 	
 	level_coordinates += Vector2(x, y)
 	
 	if level_coordinates == Vector2.ZERO:
 		if player != null:
-			bumps_label.text = ""
-			timer_label.text = ""
+			bumps_label.text = "0"
+			timer_label.text = "0.0"
 			score_label.visible = true
-			level_label.visible = false
-			
-	level_label.text = str(level_coordinates.x) + "." + str(-level_coordinates.y)
 	
 	if player != null:
 		player.stop()
 	
 	var transition_time = 0
 	var initial_camera_position = camera.global_position
-	var target_camera_position = initial_camera_position + Vector2(x * get_viewport_rect().size.x, y * get_viewport_rect().size.y)
+	var target_camera_position = initial_camera_position + Vector2(x * room_size.x, y * room_size.y)
 	
 	# skip screen_transition
 	if Input.is_key_pressed(KEY_H):
@@ -126,10 +130,10 @@ func transition(x, y):
 func update_timer():
 	score_label.visible = false
 	
-	var time_string = str("%.2f" % current_timer)
+	var time_string = strf(current_timer)
 	
 	if best_time != 0:
-		time_string += "/" + str("%.2f" % best_time)
+		time_string += "/" + strf(best_time)
 	
 	timer_label.text = time_string
 
@@ -141,9 +145,8 @@ func reset_game():
 	
 	current_timer = 0
 	
-	timer_label.text = ""
-	bumps_label.text = ""
-	level_label.text = ""
+	timer_label.text = "0.0"
+	bumps_label.text = "0"
 	
 	score_label.visible = true
 	
@@ -159,16 +162,19 @@ func triggered_goal(body):
 		
 		var score = current_timer + player.bumps
 			
-		score_label.text = "score: " + str("%.2f" % current_timer) + " + " + str(player.bumps) + " = " + str("%.2f" % score)
+		score_label.text = "score: " + strf(current_timer) + " + " + str(player.bumps) + " = " + strf(score)
 		
 		if score < best_score or best_score == 0.0:
 			score_label.text += "\n" + "new best!"
 			
 			if best_score != 0.0:
-				score_label.text += "\nprevious best: " + str("%.2f" % best_score)
+				score_label.text += "\nprevious best: " + strf(best_score)
 				
 			best_score = score
 		elif best_score != 0.0:
-			score_label.text += "\nbest: " + str("%.2f" % best_score)
+			score_label.text += "\nbest: " + strf(best_score)
 		
 		reset_game()
+
+func strf(f):
+	return str("%.1f" % f)

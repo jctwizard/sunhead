@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cyv0ql1fc8tbn" path="res://sprites/sun-head.png" id="4_6ntlk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vimpx"]
-radius = 20.0
+radius = 15.0
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("default_sprite", "bump_sprite")]
 z_index = 1
@@ -15,6 +15,7 @@ gravity_scale = 0.0
 max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("2_th4ao")
+speed = 55.0
 default_sprite = NodePath("Sprite")
 bump_sprite = NodePath("BumpSprite")
 bump_show_duration = 0.15
@@ -23,13 +24,13 @@ metadata/_edit_lock_ = true
 [node name="BumpSprite" type="Sprite2D" parent="."]
 visible = false
 position = Vector2(-1, 4)
-scale = Vector2(0.55, 0.55)
+scale = Vector2(0.4, 0.4)
 texture = ExtResource("3_nnw7c")
 region_rect = Rect2(221.821, 621.52, 160, 160)
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(-1, 4)
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.35, 0.35)
 texture = ExtResource("4_6ntlk")
 region_rect = Rect2(221.821, 621.52, 160, 160)
 
