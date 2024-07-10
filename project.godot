@@ -14,6 +14,10 @@ config/name="sunhead"
 run/main_scene="res://scenes/world.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 
+[autoload]
+
+SaveSystem="*res://addons/save_system/save_system.gd"
+
 [display]
 
 window/size/viewport_width=800
@@ -22,6 +26,10 @@ window/size/viewport_height=800
 [dotnet]
 
 project/assembly_name="sunhead"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/save_system/plugin.cfg")
 
 [input]
 

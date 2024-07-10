@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 class_name world_manager
 
 @export var room_size : Vector2 = Vector2(600, 600) 
@@ -17,11 +17,12 @@ var current_timer = 0.0
 
 var best_score : float = 0.0
 var best_time : float = 0.0
-var best_bumps : int = 0
+var best_bumps : int = -1
 
 var player = null
 
 var transitioning = false
+var finished = false
 
 var level_coordinates = Vector2.ZERO
 
@@ -31,7 +32,19 @@ func _ready():
 	timer_label.text = "0.0"
 	bumps_label.text = "0"
 	
-	margin_size = (get_viewport_rect().size - room_size) / 2
+	if SaveSystem.has("best_time"):
+		best_time = SaveSystem.get_var("best_time")
+
+		if best_time != 0:
+			timer_label.text += "/" + strf(best_time)
+	
+	if SaveSystem.has("best_bumps"):
+		best_bumps = SaveSystem.get_var("best_bumps")
+	
+		if best_bumps != -1:
+			bumps_label.text += "/" + str(best_bumps)
+			
+	margin_size = (get_viewport().get_visible_rect().size - room_size) / 2
 	
 	for goal in goals:
 		goal.connect("body_entered", triggered_goal)
@@ -55,17 +68,17 @@ func spawn_player():
 func _process(delta):
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
-		
+	
 	await update_camera()
 		
-	if level_coordinates != Vector2.ZERO and transitioning == false:
+	if level_coordinates != Vector2.ZERO and transitioning == false and finished == false:
 		current_timer += delta
 		
 		update_timer()
 		
 		bumps_label.text = str(player.bumps)
 		
-		if best_bumps != 0:
+		if best_bumps != -1:
 			bumps_label.text += "/" + str(best_bumps)
 		
 	if Input.is_key_pressed(KEY_R):
@@ -75,14 +88,14 @@ func _process(delta):
 		reset_game()
 
 func update_camera():
-	if player != null and camera != null and transitioning == false:
+	if player != null and camera != null and transitioning == false and finished == false:
 		if player.global_position.x < camera.global_position.x + margin_size.x:
 			await transition(-1, 0)
-		elif player.global_position.x > camera.global_position.x + get_viewport_rect().size.x - margin_size.x:
+		elif player.global_position.x > camera.global_position.x + get_viewport().get_visible_rect().size.x - margin_size.x:
 			await transition(1, 0)
 		elif player.global_position.y < camera.global_position.y + margin_size.y:
 			await transition(0, -1)
-		elif player.global_position.y > camera.global_position.y + get_viewport_rect().size.y - margin_size.y:
+		elif player.global_position.y > camera.global_position.y + get_viewport().get_visible_rect().size.y - margin_size.y:
 			await transition(0, 1)
 
 func transition(x, y):
@@ -99,7 +112,15 @@ func transition(x, y):
 	if level_coordinates == Vector2.ZERO:
 		if player != null:
 			bumps_label.text = "0"
+			
+			if best_bumps != -1:
+				bumps_label.text += "/" + str(best_bumps)
+			
 			timer_label.text = "0.0"
+			
+			if best_time != 0:
+				timer_label.text += "/" + strf(best_time)
+				
 			score_label.visible = true
 	
 	if player != null:
@@ -138,27 +159,31 @@ func update_timer():
 	timer_label.text = time_string
 
 func reset_game():
+	spawn_player()
+	
 	if camera != null:
-		camera.global_position = Vector2.ZERO
+		camera.set_deferred("global_position", Vector2.ZERO)
 		
 	level_coordinates = Vector2.ZERO
 	
 	current_timer = 0
 	
-	timer_label.text = "0.0"
-	bumps_label.text = "0"
-	
 	score_label.visible = true
 	
-	spawn_player()
+	finished = false
 
 func triggered_goal(body):
-	if body == player:
+	if body == player and finished == false:
+		finished = true
+		score_label.visible = true
+	
 		if current_timer < best_time or best_time == 0.0:
 			best_time = current_timer
+			SaveSystem.set_var("best_time", best_time)
 			
-		if player.bumps < best_bumps or best_bumps == 0:
+		if player.bumps < best_bumps or best_bumps == -1:
 			best_bumps = player.bumps
+			SaveSystem.set_var("best_bumps", best_bumps)
 		
 		var score = current_timer + player.bumps
 			
@@ -174,6 +199,11 @@ func triggered_goal(body):
 		elif best_score != 0.0:
 			score_label.text += "\nbest: " + strf(best_score)
 		
+		if player != null:
+			player.free()
+			
+		await transition(-level_coordinates.x, -level_coordinates.y)
+	
 		reset_game()
 
 func strf(f):

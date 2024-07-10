@@ -2,7 +2,7 @@
 
 [ext_resource type="PhysicsMaterial" uid="uid://c7lh5saouqxng" path="res://physics/tile_physics_material.tres" id="1_amcxt"]
 [ext_resource type="Script" path="res://scripts/character.gd" id="2_bogs6"]
-[ext_resource type="Texture2D" uid="uid://cyv0ql1fc8tbn" path="res://sprites/sun-head.png" id="3_6fmgs"]
+[ext_resource type="Texture2D" uid="uid://l10wwwm4gwo6" path="res://sprites/small_spritesheet.png" id="3_0nehy"]
 [ext_resource type="Script" path="res://scripts/animate.gd" id="4_nqt6i"]
 [ext_resource type="FontFile" uid="uid://dp45wfma7rscj" path="res://fonts/Sniglet-Regular.otf" id="5_e3qhc"]
 
@@ -23,10 +23,13 @@ freeze_mode = 1
 max_contacts_reported = 10
 contact_monitor = true
 script = ExtResource("2_bogs6")
+max_bubble_width = 150.0
+bump_cooldown_duration = 1.0
 
 [node name="CharacterSprite" type="Sprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("3_6fmgs")
+texture = ExtResource("3_0nehy")
+region_enabled = true
+region_rect = Rect2(413.985, 108.231, 85.6499, 84.8986)
 script = ExtResource("4_nqt6i")
 
 [node name="CharacterCollision" type="CollisionShape2D" parent="."]
@@ -39,17 +42,15 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -100.0
-offset_top = -76.0
-offset_right = 100.0
-offset_bottom = -36.0
+offset_left = -5.0
+offset_top = -78.0
+offset_right = 5.0
+offset_bottom = -38.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "hello there"
 label_settings = SubResource("LabelSettings_luef5")
 horizontal_alignment = 1
 vertical_alignment = 2
-autowrap_mode = 2
 
 [node name="ColorRect" type="ColorRect" parent="Label"]
 show_behind_parent = true
