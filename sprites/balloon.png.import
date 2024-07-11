@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l10wwwm4gwo6"
-path="res://.godot/imported/small_spritesheet.png-846086a30bcbfab94d64027d5cd9db05.ctex"
+uid="uid://ccgbudkpft3ex"
+path="res://.godot/imported/balloon.png-cecfc43db1a1e7553d1f8a6de18149cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/small_spritesheet.png"
-dest_files=["res://.godot/imported/small_spritesheet.png-846086a30bcbfab94d64027d5cd9db05.ctex"]
+source_file="res://sprites/balloon.png"
+dest_files=["res://.godot/imported/balloon.png-cecfc43db1a1e7553d1f8a6de18149cc.ctex"]
 
 [params]
 

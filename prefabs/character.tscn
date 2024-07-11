@@ -2,7 +2,7 @@
 
 [ext_resource type="PhysicsMaterial" uid="uid://c7lh5saouqxng" path="res://physics/tile_physics_material.tres" id="1_amcxt"]
 [ext_resource type="Script" path="res://scripts/character.gd" id="2_bogs6"]
-[ext_resource type="Texture2D" uid="uid://l10wwwm4gwo6" path="res://sprites/small_spritesheet.png" id="3_0nehy"]
+[ext_resource type="Texture2D" uid="uid://l10wwwm4gwo6" path="res://sprites/small-spritesheet.png" id="3_0nehy"]
 [ext_resource type="Script" path="res://scripts/animate.gd" id="4_nqt6i"]
 [ext_resource type="FontFile" uid="uid://dp45wfma7rscj" path="res://fonts/Sniglet-Regular.otf" id="5_e3qhc"]
 

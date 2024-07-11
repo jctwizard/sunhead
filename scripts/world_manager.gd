@@ -5,8 +5,10 @@ class_name world_manager
 @export var timer_label : Label
 @export var score_label : Label
 @export var bumps_label : Label
+@export var balloons_label : Label
 @export var spawn : Node2D
 @export var goals : Array[Area2D]
+@export var balloons : Node2D
 @export var player_prefab : PackedScene
 @export var transition_duration : float = 1.5
 @export var camera : Camera2D
@@ -14,10 +16,12 @@ class_name world_manager
 @export var time_decimals : int = 1
 
 var current_timer = 0.0
+var current_balloons = 0
 
 var best_score : float = 0.0
 var best_time : float = 0.0
 var best_bumps : int = -1
+var best_balloons : int = -1
 
 var player = null
 
@@ -35,12 +39,13 @@ func _ready():
 	
 	timer_label.text = "0.0"
 	bumps_label.text = "0"
+	balloons_label.text = "0"
 	
 	if SaveSystem.has("best_score"):
 		best_score = SaveSystem.get_var("best_score")
 
 		if best_score != 0:
-			score_label.text += "best score: " + strf(best_score)
+			score_label.text += "\nbest score: " + strf(best_score)
 	
 	if SaveSystem.has("best_time"):
 		best_time = SaveSystem.get_var("best_time")
@@ -54,10 +59,19 @@ func _ready():
 		if best_bumps != -1:
 			bumps_label.text += "/" + str(best_bumps)
 			
+	if SaveSystem.has("best_balloons"):
+		best_balloons = SaveSystem.get_var("best_balloons")
+	
+		if best_balloons != -1:
+			balloons_label.text += "/" + str(best_balloons)
+			
 	margin_size = (get_viewport().get_visible_rect().size - room_size) / 2
 	
 	for goal in goals:
 		goal.connect("body_entered", triggered_goal)
+		
+	for balloon in balloons.get_children():
+		balloon.connect("body_entered", hit_balloon.bind(balloon))
 	
 	spawn_player()
 	
@@ -84,10 +98,12 @@ func _process(delta):
 			SaveSystem.delete("best_score")
 			SaveSystem.delete("best_time")
 			SaveSystem.delete("best_bumps")
+			SaveSystem.delete("best_balloons")
 			
 			best_score = 0.0
 			best_time = 0.0
 			best_bumps = -1
+			best_balloons = -1
 			
 			timer_label.text = "0.0"
 			bumps_label.text = "0"
@@ -104,6 +120,11 @@ func _process(delta):
 		
 		if best_bumps != -1:
 			bumps_label.text += "/" + str(best_bumps)
+		
+		balloons_label.text = str(current_balloons)
+		
+		if best_balloons != -1:
+			balloons_label.text += "/" + str(best_balloons)
 		
 	if Input.is_key_pressed(KEY_R):
 		if player != null:
@@ -129,6 +150,8 @@ func transition(x, y):
 		if player != null:
 			player.bumps = 0
 			current_timer = 0
+			current_balloons = 0
+			reset_balloons()
 			score_label.visible = false
 	
 	level_coordinates += Vector2(x, y)
@@ -139,11 +162,17 @@ func transition(x, y):
 			
 			if best_bumps != -1:
 				bumps_label.text += "/" + str(best_bumps)
+				
+			balloons_label.text = "0"
+			
+			if best_balloons != -1:
+				balloons_label.text += "/" + str(best_balloons)
 			
 			timer_label.text = "0.0"
 			
 			if best_time != 0:
 				timer_label.text += "/" + strf(best_time)
+				
 				
 			score_label.visible = true
 	
@@ -182,6 +211,11 @@ func update_timer():
 	
 	timer_label.text = time_string
 
+func reset_balloons():
+	for balloon in balloons.get_children():
+		balloon.visible = true
+		balloon.set_deferred("monitoring", true)
+
 func reset_game():
 	spawn_player()
 	
@@ -191,19 +225,28 @@ func reset_game():
 	level_coordinates = Vector2.ZERO
 	
 	current_timer = 0
+	current_balloons = 0
+	
+	reset_balloons()
 	
 	score_label.visible = true
 	
 	finished = false
 
+func hit_balloon(body, balloon):
+	if body == player:
+		current_balloons += 1
+		balloon.visible = false
+		balloon.set_deferred("monitoring", false)
+		
 func triggered_goal(body):
 	if body == player and finished == false:
 		finished = true
 		score_label.visible = true
 	
-		var score = current_timer + player.bumps
+		var score = current_timer + player.bumps - current_balloons
 		
-		score_label.text = "score: " + strf(current_timer) + " + " + str(player.bumps) + " = " + strf(score)
+		score_label.text = "score: " + strf(current_timer) + " + " + str(player.bumps) + " - " + str(current_balloons) + " = " + strf(score)
 		
 		if score < best_score or best_score == 0.0:
 			best_time = current_timer

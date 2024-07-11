@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://bgpupadlev8t0"]
+
+[ext_resource type="Texture2D" uid="uid://dqhylw4wjyerl" path="res://sprites/small-spritesheet-2.png" id="1_0lwuc"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ay225"]
+radius = 125.008
+height = 254.253
+
+[node name="Balloon" type="Area2D" groups=["Balloon", "Goal"]]
+scale = Vector2(0.3, 0.3)
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-6.66667, 3.33333)
+scale = Vector2(2.48045, 2.44862)
+texture = ExtResource("1_0lwuc")
+region_enabled = true
+region_rect = Rect2(102.271, 10.09, 90, 90)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1.65851, -13.7931)
+shape = SubResource("CapsuleShape2D_ay225")
