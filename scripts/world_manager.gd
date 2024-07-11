@@ -28,9 +28,19 @@ var level_coordinates = Vector2.ZERO
 
 var margin_size : Vector2
 
+var initial_score_text : String = ""
+
 func _ready():
+	initial_score_text = score_label.text
+	
 	timer_label.text = "0.0"
 	bumps_label.text = "0"
+	
+	if SaveSystem.has("best_score"):
+		best_score = SaveSystem.get_var("best_score")
+
+		if best_score != 0:
+			score_label.text += "best score: " + strf(best_score)
 	
 	if SaveSystem.has("best_time"):
 		best_time = SaveSystem.get_var("best_time")
@@ -68,7 +78,21 @@ func spawn_player():
 func _process(delta):
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
-	
+		
+	if Input.is_key_pressed(KEY_CTRL) and Input.is_key_pressed(KEY_BACKSPACE):
+		if SaveSystem.has("best_score"):
+			SaveSystem.delete("best_score")
+			SaveSystem.delete("best_time")
+			SaveSystem.delete("best_bumps")
+			
+			best_score = 0.0
+			best_time = 0.0
+			best_bumps = -1
+			
+			timer_label.text = "0.0"
+			bumps_label.text = "0"
+			score_label.text = initial_score_text
+
 	await update_camera()
 		
 	if level_coordinates != Vector2.ZERO and transitioning == false and finished == false:
@@ -177,25 +201,24 @@ func triggered_goal(body):
 		finished = true
 		score_label.visible = true
 	
-		if current_timer < best_time or best_time == 0.0:
-			best_time = current_timer
-			SaveSystem.set_var("best_time", best_time)
-			
-		if player.bumps < best_bumps or best_bumps == -1:
-			best_bumps = player.bumps
-			SaveSystem.set_var("best_bumps", best_bumps)
-		
 		var score = current_timer + player.bumps
-			
+		
 		score_label.text = "score: " + strf(current_timer) + " + " + str(player.bumps) + " = " + strf(score)
 		
 		if score < best_score or best_score == 0.0:
+			best_time = current_timer
+			SaveSystem.set_var("best_time", best_time)
+			
+			best_bumps = player.bumps
+			SaveSystem.set_var("best_bumps", best_bumps)
+			
 			score_label.text += "\n" + "new best!"
 			
 			if best_score != 0.0:
 				score_label.text += "\nprevious best: " + strf(best_score)
 				
 			best_score = score
+			SaveSystem.set_var("best_score", best_score)
 		elif best_score != 0.0:
 			score_label.text += "\nbest: " + strf(best_score)
 		
